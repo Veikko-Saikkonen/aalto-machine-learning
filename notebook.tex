@@ -1,0 +1,1796 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{notebook}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{notebook-for-the-project}{%
+\section{Notebook for the Project}\label{notebook-for-the-project}}
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+Do MNIST-1D, compare CNN, RandomForest with PCA, LinearRegression with
+PCA
+
+Goal: Compare the relation of accuracy to training and prediction time.
+Expected outcome: CNN is the most accurate, but will be a lot slower
+than the others.
+
+    \hypertarget{dependencies}{%
+\subsection{Dependencies}\label{dependencies}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} !pip install torch}
+\PY{c+c1}{\PYZsh{} !pip install pandas}
+\PY{c+c1}{\PYZsh{} !pip install scikit\PYZhy{}learn}
+\PY{c+c1}{\PYZsh{} !pip install tensorboard}
+\PY{c+c1}{\PYZsh{} !pip install seaborn}
+\PY{c+c1}{\PYZsh{} !pip install torchvision}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{imports}{%
+\subsection{Imports}\label{imports}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{torch}
+\PY{k+kn}{from} \PY{n+nn}{torch} \PY{k+kn}{import} \PY{n}{autograd}
+\PY{k+kn}{from} \PY{n+nn}{torch} \PY{k+kn}{import} \PY{n}{nn}
+\PY{k+kn}{from} \PY{n+nn}{torch}\PY{n+nn}{.}\PY{n+nn}{utils}\PY{n+nn}{.}\PY{n+nn}{data} \PY{k+kn}{import} \PY{n}{TensorDataset}\PY{p}{,} \PY{n}{DataLoader}
+\PY{k+kn}{from} \PY{n+nn}{torchvision}\PY{n+nn}{.}\PY{n+nn}{datasets} \PY{k+kn}{import} \PY{n}{MNIST}
+\PY{k+kn}{from} \PY{n+nn}{torchvision} \PY{k+kn}{import} \PY{n}{transforms}
+
+\PY{k+kn}{from} \PY{n+nn}{matplotlib} \PY{k+kn}{import} \PY{n}{pyplot} \PY{k}{as} \PY{n}{plt}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{from} \PY{n+nn}{tqdm} \PY{k+kn}{import} \PY{n}{tqdm}
+\PY{k+kn}{from} \PY{n+nn}{copy} \PY{k+kn}{import} \PY{n}{deepcopy}
+
+\PY{k+kn}{from} \PY{n+nn}{collections} \PY{k+kn}{import} \PY{n}{OrderedDict}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{LogisticRegression}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{pipeline} \PY{k+kn}{import} \PY{n}{Pipeline}
+\PY{k+kn}{from} \PY{n+nn}{torch}\PY{n+nn}{.}\PY{n+nn}{utils}\PY{n+nn}{.}\PY{n+nn}{tensorboard} \PY{k+kn}{import} \PY{n}{SummaryWriter}
+\PY{k+kn}{import} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k}{as} \PY{n+nn}{metrics}
+\PY{k+kn}{from} \PY{n+nn}{pandas} \PY{k+kn}{import} \PY{n}{Series}
+\PY{k+kn}{from} \PY{n+nn}{typing} \PY{k+kn}{import} \PY{n}{Union}
+\PY{k+kn}{import} \PY{n+nn}{json}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{confusion\PYZus{}matrix}\PY{p}{,} \PY{n}{accuracy\PYZus{}score}
+
+
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k+kn}{import} \PY{n}{PCA}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{tree} \PY{k+kn}{import} \PY{n}{DecisionTreeClassifier}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{linear\PYZus{}model} \PY{k+kn}{import} \PY{n}{LogisticRegression}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{RandomizedSearchCV}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/Users/veikko/Documents/Kouluhommia/MachineLearning/aalto-machine-
+learning/.venv/lib/python3.9/site-packages/tqdm/auto.py:22: TqdmWarning:
+IProgress not found. Please update jupyter and ipywidgets. See
+https://ipywidgets.readthedocs.io/en/stable/user\_install.html
+  from .autonotebook import tqdm as notebook\_tqdm
+    \end{Verbatim}
+
+    \hypertarget{helper-functions}{%
+\subsection{Helper functions}\label{helper-functions}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{train}\PY{p}{(}\PY{n}{train\PYZus{}loader}\PY{p}{,} \PY{n}{model}\PY{p}{,} \PY{n}{optimizer}\PY{p}{,} \PY{n}{criterion}\PY{p}{,} \PY{n}{device}\PY{p}{,} \PY{n}{detect\PYZus{}bad\PYZus{}gradients}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{clip\PYZus{}grad\PYZus{}norm}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Trains PyTorch modelfor one epoch in batches.}
+
+\PY{l+s+sd}{    Args:}
+\PY{l+s+sd}{        train\PYZus{}loader: Data loader for training set.}
+\PY{l+s+sd}{        model: Neural network model.}
+\PY{l+s+sd}{        optimizer: Optimizer (e.g. SGD).}
+\PY{l+s+sd}{        criterion: Loss function (e.g. cross\PYZhy{}entropy loss).}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+
+    \PY{n}{avg\PYZus{}loss} \PY{o}{=} \PY{l+m+mi}{0}
+
+    \PY{n}{model}\PY{o}{.}\PY{n}{train}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Iterate through batches}
+    \PY{k}{for} \PY{n}{i}\PY{p}{,} \PY{n}{data} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{train\PYZus{}loader}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Get the inputs; data is a list of [inputs, labels]}
+        \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{data}
+
+        \PY{c+c1}{\PYZsh{} Move data to target device}
+        \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{inputs}\PY{o}{.}\PY{n}{to}\PY{p}{(}\PY{n}{device}\PY{p}{)}\PY{p}{,} \PY{n}{labels}\PY{o}{.}\PY{n}{to}\PY{p}{(}\PY{n}{device}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Zero the parameter gradients}
+        \PY{n}{optimizer}\PY{o}{.}\PY{n}{zero\PYZus{}grad}\PY{p}{(}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Forward + backward + optimize}
+        \PY{n}{outputs} \PY{o}{=} \PY{n}{model}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
+        \PY{n}{loss} \PY{o}{=} \PY{n}{criterion}\PY{p}{(}\PY{n}{outputs}\PY{p}{,} \PY{n}{labels}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Compute RMSE from MSE}
+        \PY{k}{if} \PY{n}{detect\PYZus{}bad\PYZus{}gradients}\PY{p}{:}
+            \PY{k}{with} \PY{n}{autograd}\PY{o}{.}\PY{n}{detect\PYZus{}anomaly}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                \PY{n}{loss}\PY{o}{.}\PY{n}{backward}\PY{p}{(}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{loss}\PY{o}{.}\PY{n}{backward}\PY{p}{(}\PY{p}{)}
+        \PY{k}{if} \PY{n}{clip\PYZus{}grad\PYZus{}norm}\PY{p}{:}
+            \PY{n}{grad\PYZus{}norm} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{nn}\PY{o}{.}\PY{n}{utils}\PY{o}{.}\PY{n}{clip\PYZus{}grad\PYZus{}norm\PYZus{}}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{parameters}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{clip\PYZus{}grad\PYZus{}norm}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Clip gradients}
+        \PY{n}{optimizer}\PY{o}{.}\PY{n}{step}\PY{p}{(}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Keep track of loss (MSE) and r2}
+        \PY{n}{avg\PYZus{}loss} \PY{o}{+}\PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{loss}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{avg\PYZus{}loss} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}loader}\PY{p}{)}
+
+
+\PY{k}{def} \PY{n+nf}{test}\PY{p}{(}\PY{n}{test\PYZus{}loader}\PY{p}{,} \PY{n}{model}\PY{p}{,} \PY{n}{criterion}\PY{p}{,} \PY{n}{device}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Evaluates network in batches.}
+
+\PY{l+s+sd}{    Args:}
+\PY{l+s+sd}{        test\PYZus{}loader: Data loader for test set.}
+\PY{l+s+sd}{        model: Neural network model.}
+\PY{l+s+sd}{        criterion: Loss function (e.g. cross\PYZhy{}entropy loss).}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+
+    \PY{n}{avg\PYZus{}loss} \PY{o}{=} \PY{l+m+mi}{0}
+
+    \PY{n}{model}\PY{o}{.}\PY{n}{eval}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Use torch.no\PYZus{}grad to skip gradient calculation, not needed for evaluation}
+    \PY{k}{with} \PY{n}{torch}\PY{o}{.}\PY{n}{no\PYZus{}grad}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+
+        \PY{c+c1}{\PYZsh{} Iterate through batches}
+        \PY{n}{all\PYZus{}predictions} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{n}{all\PYZus{}labels} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+        \PY{k}{for} \PY{n}{data} \PY{o+ow}{in} \PY{n}{test\PYZus{}loader}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Get the inputs; data is a list of [inputs, labels]}
+            \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{data}
+
+            \PY{c+c1}{\PYZsh{} Move data to target device}
+            \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{inputs}\PY{o}{.}\PY{n}{to}\PY{p}{(}\PY{n}{device}\PY{p}{)}\PY{p}{,} \PY{n}{labels}\PY{o}{.}\PY{n}{to}\PY{p}{(}\PY{n}{device}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Forward pass}
+            \PY{n}{outputs} \PY{o}{=} \PY{n}{model}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
+            \PY{n}{loss} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{criterion}\PY{p}{(}\PY{n}{outputs}\PY{p}{,} \PY{n}{labels}\PY{p}{)}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Compute RMSE from MSE}
+
+            \PY{n}{all\PYZus{}predictions}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{outputs}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+            \PY{n}{all\PYZus{}labels}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{labels}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Keep track of loss (MSE) and r2}
+            \PY{n}{avg\PYZus{}loss} \PY{o}{+}\PY{o}{=} \PY{n}{loss}
+
+    \PY{k}{return} \PY{n}{avg\PYZus{}loss} \PY{o}{/} \PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}loader}\PY{p}{)}
+      \PY{c+c1}{\PYZsh{} Track the average loss and the r2 of the last batch}
+
+
+
+
+\PY{k}{def} \PY{n+nf}{run\PYZus{}torch}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{val\PYZus{}set}\PY{p}{,} \PY{n}{test\PYZus{}set}\PY{p}{,} \PY{n}{log\PYZus{}comment}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{log\PYZus{}hparams}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{writer}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{config}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Run a test}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{k}{try}\PY{p}{:}
+        \PY{k}{if} \PY{n}{writer} \PY{o+ow}{is} \PY{k+kc}{None}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Create a writer to write to Tensorboard}
+            \PY{n}{writer} \PY{o}{=} \PY{n}{SummaryWriter}\PY{p}{(}\PY{n}{comment}\PY{o}{=}\PY{n}{log\PYZus{}comment}\PY{p}{)}
+            \PY{n}{writer}\PY{o}{.}\PY{n}{add\PYZus{}text}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{run\PYZus{}params}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{json}\PY{o}{.}\PY{n}{dumps}\PY{p}{(}\PY{n}{config}\PY{p}{,} \PY{n}{indent}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Create the dataloaders}
+        \PY{n}{train\PYZus{}loader} \PY{o}{=} \PY{n}{DataLoader}\PY{p}{(}
+            \PY{n}{train\PYZus{}set}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{o}{=}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{batch\PYZus{}size}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{shuffle}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{num\PYZus{}workers}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{persistent\PYZus{}workers}\PY{o}{=}\PY{k+kc}{False}
+        \PY{p}{)}
+        \PY{n}{val\PYZus{}loader} \PY{o}{=} \PY{n}{DataLoader}\PY{p}{(}
+            \PY{n}{val\PYZus{}set}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{o}{=}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{batch\PYZus{}size}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{shuffle}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{num\PYZus{}workers}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{persistent\PYZus{}workers}\PY{o}{=}\PY{k+kc}{False}
+        \PY{p}{)}
+        \PY{n}{test\PYZus{}loader} \PY{o}{=} \PY{n}{DataLoader}\PY{p}{(}
+            \PY{n}{test\PYZus{}set}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{o}{=}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{batch\PYZus{}size}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{shuffle}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{num\PYZus{}workers}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{persistent\PYZus{}workers}\PY{o}{=}\PY{k+kc}{False}
+        \PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Create loss function and optimizer}
+        \PY{k}{if} \PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSE}\PY{l+s+s2}{\PYZdq{}} \PY{o+ow}{or} \PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RMSE}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+            \PY{n}{criterion} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{MSELoss}\PY{p}{(}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{k}{raise} \PY{n+ne}{ValueError}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Loss }\PY{l+s+si}{\PYZob{}}\PY{n}{config}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{loss}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ not recognized.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+        \PY{n}{optimizer} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{optim}\PY{o}{.}\PY{n}{Adam}\PY{p}{(}
+            \PY{n}{model}\PY{o}{.}\PY{n}{parameters}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{lr}\PY{o}{=}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{optimizer}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lr}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{weight\PYZus{}decay}\PY{o}{=}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{optimizer}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{weight\PYZus{}decay}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+        \PY{p}{)}
+        \PY{k}{if} \PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lr\PYZus{}scheduler}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{:}
+            \PY{n}{scheduler} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{optim}\PY{o}{.}\PY{n}{lr\PYZus{}scheduler}\PY{o}{.}\PY{n}{MultiStepLR}\PY{p}{(}\PY{n}{optimizer}\PY{o}{=}\PY{n}{optimizer}\PY{p}{,} \PY{o}{*}\PY{o}{*}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lr\PYZus{}scheduler}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Use GPU if available}
+        \PY{n}{device} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cuda}\PY{l+s+s2}{\PYZdq{}} \PY{k}{if} \PY{n}{torch}\PY{o}{.}\PY{n}{cuda}\PY{o}{.}\PY{n}{is\PYZus{}available}\PY{p}{(}\PY{p}{)} \PY{k}{else} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cpu}\PY{l+s+s2}{\PYZdq{}}
+
+        \PY{n}{model} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{to}\PY{p}{(}\PY{n}{device}\PY{p}{)}
+
+        \PY{n}{patience} \PY{o}{=} \PY{n}{config}\PY{o}{.}\PY{n}{get}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{early\PYZus{}stopping\PYZus{}patience}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{torch}\PY{o}{.}\PY{n}{inf}\PY{p}{)}
+        \PY{n}{best\PYZus{}model} \PY{o}{=} \PY{k+kc}{None}
+        \PY{n}{best\PYZus{}loss} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{inf}
+        \PY{n}{counter} \PY{o}{=} \PY{l+m+mi}{0}
+
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Starting initial training}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{k}{for} \PY{n}{epoch} \PY{o+ow}{in} \PY{n}{tqdm}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{epochs}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Train on data}
+            \PY{n}{train\PYZus{}loss} \PY{o}{=} \PY{n}{train}\PY{p}{(}
+                \PY{n}{train\PYZus{}loader}\PY{p}{,} \PY{n}{model}\PY{p}{,} \PY{n}{optimizer}\PY{p}{,} \PY{n}{criterion}\PY{p}{,} \PY{n}{device}\PY{p}{,} \PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{detect\PYZus{}bad\PYZus{}gradients}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+            \PY{p}{)}
+            \PY{c+c1}{\PYZsh{} After training set eval mode on}
+            \PY{n}{model}\PY{o}{.}\PY{n}{eval}\PY{p}{(}\PY{p}{)}
+            \PY{c+c1}{\PYZsh{} Test on data}
+            \PY{n}{val\PYZus{}loss} \PY{o}{=} \PY{n}{test}\PY{p}{(}\PY{n}{val\PYZus{}loader}\PY{p}{,} \PY{n}{model}\PY{p}{,} \PY{n}{criterion}\PY{p}{,} \PY{n}{device}\PY{p}{)}
+            \PY{n}{test\PYZus{}loss} \PY{o}{=} \PY{n}{test}\PY{p}{(}\PY{n}{test\PYZus{}loader}\PY{p}{,} \PY{n}{model}\PY{p}{,} \PY{n}{criterion}\PY{p}{,} \PY{n}{device}\PY{p}{)}
+
+            \PY{k}{if} \PY{n}{config}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lr\PYZus{}scheduler}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{:}
+                \PY{n}{scheduler}\PY{o}{.}\PY{n}{step}\PY{p}{(}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Write metrics to Tensorboard}
+            \PY{n}{writer}\PY{o}{.}\PY{n}{add\PYZus{}scalars}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Train\PYZus{}loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{train\PYZus{}loss}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Val\PYZus{}loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{val\PYZus{}loss}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Test\PYZus{}loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{test\PYZus{}loss}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{epoch}\PY{p}{)}
+
+            \PY{k}{if} \PY{n}{log\PYZus{}hparams}\PY{p}{:}
+
+                \PY{n}{report\PYZus{}metrics} \PY{o}{=} \PY{p}{\PYZob{}}
+                    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{hparam/test\PYZus{}loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{test\PYZus{}loss}\PY{p}{,}
+                    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{hparam/train\PYZus{}loss}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{train\PYZus{}loss}\PY{p}{,}
+                \PY{p}{\PYZcb{}}
+                \PY{n}{writer}\PY{o}{.}\PY{n}{add\PYZus{}hparams}\PY{p}{(}\PY{n}{log\PYZus{}hparams}\PY{p}{,} \PY{n}{report\PYZus{}metrics}\PY{p}{,} \PY{n}{run\PYZus{}name}\PY{o}{=}\PY{n}{log\PYZus{}comment}\PY{p}{)}
+
+            \PY{c+c1}{\PYZsh{} Early stopping}
+            \PY{k}{if} \PY{n}{best\PYZus{}loss} \PY{o}{\PYZgt{}} \PY{n}{val\PYZus{}loss}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+                \PY{n}{best\PYZus{}loss} \PY{o}{=} \PY{n}{val\PYZus{}loss}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}
+                \PY{n}{counter} \PY{o}{=} \PY{l+m+mi}{0}
+                \PY{n}{best\PYZus{}model} \PY{o}{=} \PY{n}{deepcopy}\PY{p}{(}\PY{n}{model}\PY{p}{)}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{counter} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+                \PY{k}{if} \PY{n}{counter} \PY{o}{\PYZgt{}} \PY{n}{patience}\PY{p}{:}
+                    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Initiating early stopping}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+                    \PY{k}{if} \PY{n}{best\PYZus{}model} \PY{o+ow}{is} \PY{o+ow}{not} \PY{k+kc}{None}\PY{p}{:}
+                        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Restoring best weights}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+                        \PY{n}{model} \PY{o}{=} \PY{n}{best\PYZus{}model}
+                    \PY{k}{break}
+
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{Training Finished.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{writer}\PY{o}{.}\PY{n}{flush}\PY{p}{(}\PY{p}{)}
+        \PY{n}{writer}\PY{o}{.}\PY{n}{close}\PY{p}{(}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Finally, use the model to predict the train, validation and test sets}
+    \PY{k}{except} \PY{n+ne}{KeyboardInterrupt}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Interrupted}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Gathering final predictions}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{k}{if} \PY{o+ow}{not} \PY{n}{log\PYZus{}hparams}\PY{p}{:}
+        \PY{n}{results}\PY{p}{,} \PY{n}{predictions}\PY{p}{,} \PY{n}{model} \PY{o}{=} \PY{n}{gather\PYZus{}results}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{train\PYZus{}loader}\PY{p}{,} \PY{n}{val\PYZus{}loader}\PY{p}{,} \PY{n}{test\PYZus{}loader}\PY{p}{)}
+
+        \PY{k}{return} \PY{n}{results}\PY{p}{,} \PY{n}{predictions}\PY{p}{,} \PY{n}{model}
+    \PY{k}{else}\PY{p}{:}
+        \PY{k}{return}
+
+
+\PY{k}{def} \PY{n+nf}{gather\PYZus{}results}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{train\PYZus{}loader}\PY{p}{,} \PY{n}{val\PYZus{}loader}\PY{p}{,} \PY{n}{test\PYZus{}loader}\PY{p}{)}\PY{p}{:}
+    \PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}}
+\PY{l+s+sd}{    Gather the results for train, val and test sets.}
+\PY{l+s+sd}{    Returns:}
+\PY{l+s+sd}{        results, predictions, model}
+\PY{l+s+sd}{    \PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{model}\PY{o}{.}\PY{n}{eval}\PY{p}{(}\PY{p}{)}
+    \PY{k}{with} \PY{n}{torch}\PY{o}{.}\PY{n}{no\PYZus{}grad}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+
+        \PY{n}{y\PYZus{}train} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{n}{y\PYZus{}pred\PYZus{}train} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+        \PY{n}{y\PYZus{}val} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{n}{y\PYZus{}pred\PYZus{}val} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+        \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{n}{y\PYZus{}pred\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+        \PY{k}{for} \PY{n}{data} \PY{o+ow}{in} \PY{n}{train\PYZus{}loader}\PY{p}{:}
+            \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{data}
+            \PY{n}{pred} \PY{o}{=} \PY{n}{model}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
+            \PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{labels}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+            \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{pred}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} Iterate through batches}
+        \PY{k}{for} \PY{n}{data} \PY{o+ow}{in} \PY{n}{val\PYZus{}loader}\PY{p}{:}
+            \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{data}
+            \PY{n}{pred} \PY{o}{=} \PY{n}{model}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
+            \PY{n}{y\PYZus{}val}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{labels}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+            \PY{n}{y\PYZus{}pred\PYZus{}val}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{pred}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+        \PY{k}{for} \PY{n}{data} \PY{o+ow}{in} \PY{n}{test\PYZus{}loader}\PY{p}{:}
+            \PY{n}{inputs}\PY{p}{,} \PY{n}{labels} \PY{o}{=} \PY{n}{data}
+            \PY{n}{pred} \PY{o}{=} \PY{n}{model}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
+            \PY{n}{y\PYZus{}test}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{labels}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+            \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{pred}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+    \PY{n}{y\PYZus{}pred\PYZus{}train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}
+    \PY{n}{y\PYZus{}pred\PYZus{}val} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{y\PYZus{}pred\PYZus{}val}\PY{p}{)}
+    \PY{n}{y\PYZus{}pred\PYZus{}test} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}
+    \PY{n}{y\PYZus{}train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{)}
+    \PY{n}{y\PYZus{}val} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{y\PYZus{}val}\PY{p}{)}
+    \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{)}
+    \PY{n}{train\PYZus{}res} \PY{o}{=} \PY{n}{classification\PYZus{}report}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}
+    \PY{n}{validation\PYZus{}res} \PY{o}{=} \PY{n}{classification\PYZus{}report}\PY{p}{(}\PY{n}{y\PYZus{}val}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}val}\PY{p}{)}
+    \PY{n}{test\PYZus{}res} \PY{o}{=} \PY{n}{classification\PYZus{}report}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}
+
+    \PY{n}{results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{train\PYZus{}res}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{validate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{validation\PYZus{}res}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{test}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{test\PYZus{}res}\PY{p}{\PYZcb{}}\PY{p}{)}
+
+    \PY{n}{predictions} \PY{o}{=} \PY{p}{\PYZob{}}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pred}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{\PYZcb{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{validate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{y\PYZus{}val}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pred}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{y\PYZus{}pred\PYZus{}val}\PY{p}{\PYZcb{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{test}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{y}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{y\PYZus{}test}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pred}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{p}{\PYZcb{}}
+
+    \PY{k}{return} \PY{n}{results}\PY{p}{,} \PY{n}{predictions}\PY{p}{,} \PY{n}{model}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{load-the-data}{%
+\subsection{Load the data}\label{load-the-data}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{transform} \PY{o}{=} \PY{n}{transforms}\PY{o}{.}\PY{n}{Compose}\PY{p}{(}\PY{p}{[}\PY{n}{transforms}\PY{o}{.}\PY{n}{ToTensor}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+                                \PY{n}{transforms}\PY{o}{.}\PY{n}{Normalize}\PY{p}{(}\PY{p}{(}\PY{l+m+mf}{0.1307}\PY{p}{,}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+m+mf}{0.3081}\PY{p}{,}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+
+\PY{n}{train\PYZus{}data} \PY{o}{=} \PY{n}{MNIST}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{train}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{download}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{transform}\PY{o}{=}\PY{n}{transform}\PY{p}{)}
+\PY{n}{test\PYZus{}data} \PY{o}{=} \PY{n}{MNIST}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{./data}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{train}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{download}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{transform}\PY{o}{=}\PY{n}{transform}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \hypertarget{study-the-mnist-2d-dataset}{%
+\subsection{Study the MNIST-2D
+dataset}\label{study-the-mnist-2d-dataset}}
+
+    Length of the dataset
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Lenght of the training set:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}data}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Lenght of the test set:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}data}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Shape of }\PY{l+s+se}{\PYZbs{}\PYZdq{}}\PY{l+s+s2}{features}\PY{l+s+se}{\PYZbs{}\PYZdq{}}\PY{l+s+s2}{, i.e. images: }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{train\PYZus{}data}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Lenght of the training set: 60000
+Lenght of the test set: 10000
+
+Shape of "features", i.e. images:  torch.Size([1, 28, 28])
+    \end{Verbatim}
+
+    \hypertarget{show-some-example-images}{%
+\subsubsection{Show some example
+images}\label{show-some-example-images}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{25}\PY{p}{)}\PY{p}{:}
+    \PY{n}{x}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+    \PY{n}{ax} \PY{o}{=} \PY{n}{axs}\PY{p}{[}\PY{n}{i} \PY{o}{/}\PY{o}{/} \PY{l+m+mi}{5}\PY{p}{]}\PY{p}{[}\PY{n}{i} \PY{o}{\PYZpc{}} \PY{l+m+mi}{5}\PY{p}{]}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{view}\PY{p}{(}\PY{l+m+mi}{28}\PY{p}{,} \PY{l+m+mi}{28}\PY{p}{)}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gray}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{axis}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{off}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{axis}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{off}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_13_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Distribution of labels in train and test sets}
+
+\PY{n}{train\PYZus{}labels} \PY{o}{=} \PY{p}{[}\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}data}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+\PY{n}{test\PYZus{}labels} \PY{o}{=} \PY{p}{[}\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}data}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+
+\PY{n}{test\PYZus{}features} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{stack}\PY{p}{(}\PY{p}{[}\PY{n}{test\PYZus{}data}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}data}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+\PY{n}{train\PYZus{}features} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{stack}\PY{p}{(}\PY{p}{[}\PY{n}{train\PYZus{}data}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}data}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+
+\PY{n}{train\PYZus{}labels} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{train\PYZus{}labels}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)} 
+\PY{n}{test\PYZus{}labels} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{test\PYZus{}labels}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{test}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)} 
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{labels} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{train\PYZus{}labels}\PY{p}{,} \PY{n}{test\PYZus{}labels}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{histplot}\PY{p}{(}
+    \PY{n}{data}\PY{o}{=}\PY{n}{labels}\PY{p}{,} 
+    \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} 
+    \PY{n}{hue}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dataset}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} 
+    \PY{n}{multiple}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{dodge}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} 
+    \PY{n}{stat}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{percent}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{n}{discrete}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,}
+    \PY{n}{common\PYZus{}norm}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,}
+    \PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='label', ylabel='Percent'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_15_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature statistics}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Min:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Max:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Std:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Feature statistics
+Min: tensor(-0.4242)
+Max: tensor(2.8215)
+Mean: tensor(-0.0001)
+Std: tensor(1.0000)
+    \end{Verbatim}
+
+    The data is normalized correctly as we see.
+
+    \hypertarget{visualize-the-pixel-distributions-in-training-set}{%
+\subsection{Visualize the pixel distributions in training
+set}\label{visualize-the-pixel-distributions-in-training-set}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,}\PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{suptitle}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Qualitative feature comparison}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pixelwise mean (train}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pixelwise median (train)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{test\PYZus{}features}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pixelwise mean (test)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{(}\PY{n}{test\PYZus{}features}\PY{p}{)}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pixelwise median (test)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{test\PYZus{}features}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pixelwise mean difference}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{median}\PY{p}{(}\PY{p}{(}\PY{n}{test\PYZus{}features}\PY{p}{)}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Pixelwise median difference}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0.5, 1.0, 'Pixelwise median difference')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_19_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{feature-engineering}{%
+\subsection{Feature engineering}\label{feature-engineering}}
+
+For the more traditional models in comparison, the total number of input
+features 28x28 = 784 is significantly high, and PCA is used to reduce
+the features
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{train\PYZus{}set\PYZus{}flat} \PY{o}{=} \PY{n}{train\PYZus{}features}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{n}{start\PYZus{}dim}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
+\PY{n}{test\PYZus{}set\PYZus{}flat} \PY{o}{=} \PY{n}{test\PYZus{}features}\PY{o}{.}\PY{n}{flatten}\PY{p}{(}\PY{n}{start\PYZus{}dim}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
+\PY{n}{train\PYZus{}set\PYZus{}flat}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{n}{test\PYZus{}set\PYZus{}flat}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(torch.Size([60000, 784]), torch.Size([10000, 784]))
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \hypertarget{pca-elbow-curve}{%
+\subsubsection{PCA Elbow Curve}\label{pca-elbow-curve}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{l+m+mf}{0.9}\PY{p}{)}
+\PY{n}{pca}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{train\PYZus{}set\PYZus{}flat}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{pca}\PY{o}{.}\PY{n}{explained\PYZus{}variance\PYZus{}ratio\PYZus{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{k\PYZhy{}x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{} components}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Explained variance}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+Text(0, 0.5, 'Explained variance')
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_23_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can see that the curve begins to flatten out after 20 components,
+let's use that.
+
+    \hypertarget{logistic-regression-model}{%
+\subsection{Logistic Regression Model}\label{logistic-regression-model}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{model} \PY{o}{=} \PY{n}{Pipeline}\PY{p}{(}
+    \PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pca}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{reg}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{LogisticRegression}\PY{p}{(}\PY{n}{multi\PYZus{}class}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{multinomial}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fit\PYZus{}intercept}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{500}\PY{p}{)}\PY{p}{)} \PY{c+c1}{\PYZsh{} Cross\PYZhy{}entropy loss}
+    \PY{p}{]}
+\PY{p}{)}
+\PY{n}{X\PYZus{}train} \PY{o}{=} \PY{n}{train\PYZus{}set\PYZus{}flat}
+\PY{n}{y\PYZus{}train} \PY{o}{=} \PY{n}{train\PYZus{}labels}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+
+\PY{n}{X\PYZus{}test} \PY{o}{=} \PY{n}{test\PYZus{}set\PYZus{}flat}
+\PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{test\PYZus{}labels}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+
+\PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}train} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}test} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Additional}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Train accuracy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Test accuracy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{fig}\PY{p}{,} \PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{sharex}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{sharey}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Train accuracy 0.8750666666666667
+Test accuracy 0.881
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: >
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_26_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{decision-tree}{%
+\subsection{Decision Tree}\label{decision-tree}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{optimize\PYZus{}randomforest}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{random\PYZus{}grid}\PY{p}{,} \PY{n}{hparam\PYZus{}max\PYZus{}evals}\PY{p}{,} \PY{n}{metric}\PY{p}{,} \PY{n}{kfolds}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Inspiration from https://towardsdatascience.com/hyperparameter\PYZhy{}tuning\PYZhy{}the\PYZhy{}random\PYZhy{}forest\PYZhy{}in\PYZhy{}python\PYZhy{}using\PYZhy{}scikit\PYZhy{}learn\PYZhy{}28d2aa77dd74}
+    \PY{c+c1}{\PYZsh{} First create the base model to tune}
+    \PY{n}{rf} \PY{o}{=} \PY{n}{DecisionTreeClassifier}\PY{p}{(}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} Random search of parameters, using k\PYZhy{}fold cross validation, }
+    \PY{c+c1}{\PYZsh{} search across 100 different combinations, and use all available cores}
+    \PY{n}{rf\PYZus{}random} \PY{o}{=} \PY{n}{RandomizedSearchCV}\PY{p}{(}\PY{n}{estimator} \PY{o}{=} \PY{n}{rf}\PY{p}{,} \PY{n}{param\PYZus{}distributions} \PY{o}{=} \PY{n}{random\PYZus{}grid}\PY{p}{,} \PY{n}{n\PYZus{}iter} \PY{o}{=} \PY{n}{hparam\PYZus{}max\PYZus{}evals}\PY{p}{,} \PY{n}{cv} \PY{o}{=} \PY{n}{kfolds}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{,} \PY{n}{n\PYZus{}jobs} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} Fit the random search model}
+    \PY{n}{rf\PYZus{}random}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+    \PY{k}{return} \PY{n}{rf\PYZus{}random}
+    
+\end{Verbatim}
+\end{tcolorbox}
+
+    Note: As only the training data is used in the randomized hyperparameter
+search cross validation, it can be considered as using a separate
+train-val-test split, in which the train and validation sets are used to
+optimize the model and the test set is used only for testing to avoid
+overfitting by hyperparameter optimization.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Number of features to consider at every split}
+\PY{n}{max\PYZus{}features} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mf}{0.33}\PY{p}{,} \PY{l+m+mf}{1.0}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Maximum number of levels in tree}
+\PY{n}{max\PYZus{}depth} \PY{o}{=} \PY{p}{[}\PY{n+nb}{int}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{,} \PY{n}{num} \PY{o}{=} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{]}
+\PY{n}{max\PYZus{}depth}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{k+kc}{None}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Minimum number of samples required to split a node}
+\PY{n}{min\PYZus{}samples\PYZus{}split} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Minimum number of samples required at each leaf node}
+\PY{n}{min\PYZus{}samples\PYZus{}leaf} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Create the random grid}
+\PY{n}{random\PYZus{}grid} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}features}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{max\PYZus{}features}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}depth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{max\PYZus{}depth}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}split}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{min\PYZus{}samples\PYZus{}split}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}leaf}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{min\PYZus{}samples\PYZus{}leaf}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{hparam\PYZus{}cv} \PY{o}{=} \PY{n}{optimize\PYZus{}randomforest}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,}\PY{n}{random\PYZus{}grid}\PY{o}{=}\PY{n}{random\PYZus{}grid}\PY{p}{,} \PY{n}{hparam\PYZus{}max\PYZus{}evals}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{,} \PY{n}{metric}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{neg\PYZus{}accuracy\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kfolds}\PY{o}{=}\PY{l+m+mi}{3}\PY{p}{)} \PY{c+c1}{\PYZsh{} Due to computational limitation use 3\PYZhy{}fold}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Fitting 3 folds for each of 10 candidates, totalling 30 fits
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   5.3s
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   5.2s
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   5.3s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   5.8s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   5.5s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   5.4s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   7.1s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   7.6s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   8.6s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   8.4s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=  11.5s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=  11.6s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   4.3s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   8.1s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=  11.2s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   3.5s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   3.1s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   5.6s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   2.2s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   2.8s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   2.9s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   8.6s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   8.5s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   8.4s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   5.4s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   5.1s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   4.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   9.3s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   9.6s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   8.8s
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{hparam\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{hparam\PYZus{}cv}\PY{o}{.}\PY{n}{cv\PYZus{}results\PYZus{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{hparam\PYZus{}data}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}fit\PYZus{}time}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\PY{n}{hparam\PYZus{}data}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean test scores}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{hparam\PYZus{}data}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{param\PYZus{}max\PYZus{}depth}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{estimator}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+       mean\_test\_score  mean\_fit\_time
+count           10.000         10.000
+mean             0.778          6.543
+std              0.064          2.673
+min              0.663          2.578
+25\%              0.734          5.090
+50\%              0.784          6.315
+75\%              0.834          8.201
+max              0.857         11.278
+    \end{Verbatim}
+
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='param\_max\_depth', ylabel='mean\_test\_score'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_31_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_31_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    We can see that the maximum value of max depth is limiting our
+performance. However as the parameter also increases fitting time, let
+us first apply the PCA.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
+\PY{n}{hparam\PYZus{}cv\PYZus{}pca} \PY{o}{=} \PY{n}{optimize\PYZus{}randomforest}\PY{p}{(}\PY{n}{pca}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{random\PYZus{}grid}\PY{o}{=}\PY{n}{random\PYZus{}grid}\PY{p}{,}\PY{n}{hparam\PYZus{}max\PYZus{}evals}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{metric}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{neg\PYZus{}accuracy\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kfolds}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)} \PY{c+c1}{\PYZsh{} Due to computational limitation use 3\PYZhy{}fold}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=5, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=7, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=6, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.7s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.7s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.7s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.7s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.2s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.2s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.4s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.4s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.2s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.2s
+[CV] END max\_depth=7, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.2s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.4s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.4s
+[CV] END max\_depth=8, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.4s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   0.7s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.3s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.3s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.3s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.3s
+[CV] END max\_depth=6, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.4s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.9s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=8, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.9s
+[CV] END max\_depth=10, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.5s
+[CV] END max\_depth=10, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.5s
+[CV] END max\_depth=10, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.5s
+[CV] END max\_depth=10, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.5s
+[CV] END max\_depth=10, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.6s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   1.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   1.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   1.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   1.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   1.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=6, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.0s
+[CV] END max\_depth=6, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.0s
+[CV] END max\_depth=6, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.0s
+[CV] END max\_depth=6, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.0s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   2.8s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   2.8s
+[CV] END max\_depth=6, max\_features=1.0, min\_samples\_leaf=1, min\_samples\_split=5;
+total time=   1.0s
+[CV] END max\_depth=8, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.0s
+[CV] END max\_depth=8, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.0s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   2.7s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   2.7s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   2.9s
+[CV] END max\_depth=8, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.0s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=10, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=8, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.1s
+[CV] END max\_depth=8, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.1s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=8, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=8, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=8, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=8, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.6s
+[CV] END max\_depth=8, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.7s
+[CV] END max\_depth=7, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.6s
+[CV] END max\_depth=7, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.6s
+[CV] END max\_depth=7, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.6s
+[CV] END max\_depth=6, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.5s
+[CV] END max\_depth=6, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.5s
+[CV] END max\_depth=7, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.5s
+[CV] END max\_depth=7, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   0.5s
+[CV] END max\_depth=6, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.4s
+[CV] END max\_depth=6, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.4s
+[CV] END max\_depth=6, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.4s
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{hparam\PYZus{}data\PYZus{}pca} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{hparam\PYZus{}cv\PYZus{}pca}\PY{o}{.}\PY{n}{cv\PYZus{}results\PYZus{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{hparam\PYZus{}data\PYZus{}pca}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}fit\PYZus{}time}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\PY{n}{hparam\PYZus{}data\PYZus{}pca}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean test scores}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{hparam\PYZus{}data\PYZus{}pca}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{param\PYZus{}max\PYZus{}depth}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{estimator}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+       mean\_test\_score  mean\_fit\_time
+count           20.000         20.000
+mean             0.727          0.921
+std              0.074          0.553
+min              0.602          0.338
+25\%              0.677          0.634
+50\%              0.725          0.787
+75\%              0.778          1.008
+max              0.843          2.762
+    \end{Verbatim}
+
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='param\_max\_depth', ylabel='mean\_test\_score'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_34_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_34_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    As we can see the performance didn't decrease even though the number of
+features is lower after the PCA. Let us increase the depth, since the
+training is significantly faster with the PCA.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Number of features to consider at every split}
+\PY{n}{max\PYZus{}features} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mf}{0.33}\PY{p}{,} \PY{l+m+mf}{1.0}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Maximum number of levels in tree}
+\PY{n}{max\PYZus{}depth} \PY{o}{=} \PY{p}{[}\PY{n+nb}{int}\PY{p}{(}\PY{n}{x}\PY{p}{)} \PY{k}{for} \PY{n}{x} \PY{o+ow}{in} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{,} \PY{n}{num} \PY{o}{=} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{]}
+\PY{n}{max\PYZus{}depth}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{k+kc}{None}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Minimum number of samples required to split a node}
+\PY{n}{min\PYZus{}samples\PYZus{}split} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Minimum number of samples required at each leaf node}
+\PY{n}{min\PYZus{}samples\PYZus{}leaf} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Create the random grid}
+\PY{n}{random\PYZus{}grid} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}features}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{max\PYZus{}features}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{max\PYZus{}depth}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{max\PYZus{}depth}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}split}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{min\PYZus{}samples\PYZus{}split}\PY{p}{,}
+    \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples\PYZus{}leaf}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{min\PYZus{}samples\PYZus{}leaf}
+\PY{p}{\PYZcb{}}
+
+\PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
+\PY{n}{hparam\PYZus{}cv\PYZus{}pca} \PY{o}{=} \PY{n}{optimize\PYZus{}randomforest}\PY{p}{(}\PY{n}{pca}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{random\PYZus{}grid}\PY{o}{=}\PY{n}{random\PYZus{}grid}\PY{p}{,}\PY{n}{hparam\PYZus{}max\PYZus{}evals}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{metric}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{neg\PYZus{}accuracy\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kfolds}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)} \PY{c+c1}{\PYZsh{} Due to computational limitation use 3\PYZhy{}fold}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.3s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.3s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.3s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.3s
+[CV] END max\_depth=10, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   1.3s
+[CV] END max\_depth=17, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   1.5s
+[CV] END max\_depth=17, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   1.5s
+[CV] END max\_depth=17, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   1.5s
+[CV] END max\_depth=17, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   1.6s
+[CV] END max\_depth=17, max\_features=0.665, min\_samples\_leaf=4,
+min\_samples\_split=10; total time=   1.6s
+[CV] END max\_depth=13, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.6s
+[CV] END max\_depth=13, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.6s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.1s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.2s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.2s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.3s
+[CV] END max\_depth=13, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.7s
+[CV] END max\_depth=13, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.7s
+[CV] END max\_depth=13, max\_features=0.8325, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.7s
+[CV] END max\_depth=21, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=21, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=21, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=21, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=17, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.5s
+[CV] END max\_depth=21, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=17, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.5s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   1.2s
+[CV] END max\_depth=17, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.5s
+[CV] END max\_depth=17, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.5s
+[CV] END max\_depth=17, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.5s
+[CV] END max\_depth=13, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.6s
+[CV] END max\_depth=13, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.6s
+[CV] END max\_depth=13, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.6s
+[CV] END max\_depth=13, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=13, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=2; total time=   0.6s
+[CV] END max\_depth=25, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   2.4s
+[CV] END max\_depth=21, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.7s
+[CV] END max\_depth=21, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.8s
+[CV] END max\_depth=25, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   2.3s
+[CV] END max\_depth=25, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   2.4s
+[CV] END max\_depth=25, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   2.3s
+[CV] END max\_depth=25, max\_features=0.8325, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   2.4s
+[CV] END max\_depth=21, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.7s
+[CV] END max\_depth=21, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.7s
+[CV] END max\_depth=21, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   1.9s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   2.0s
+[CV] END max\_depth=25, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.9s
+[CV] END max\_depth=25, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.8s
+[CV] END max\_depth=25, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.9s
+[CV] END max\_depth=25, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.8s
+[CV] END max\_depth=25, max\_features=0.33, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   2.1s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   2.0s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.8s
+[CV] END max\_depth=None, max\_features=0.665, min\_samples\_leaf=2,
+min\_samples\_split=5; total time=   2.0s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   0.9s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   3.3s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   3.2s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   3.3s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   3.5s
+[CV] END max\_depth=13, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.3s
+[CV] END max\_depth=13, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.3s
+[CV] END max\_depth=None, max\_features=1.0, min\_samples\_leaf=4,
+min\_samples\_split=5; total time=   3.3s
+[CV] END max\_depth=13, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.3s
+[CV] END max\_depth=13, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.3s
+[CV] END max\_depth=13, max\_features=1.0, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   2.3s
+[CV] END max\_depth=21, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   2.4s
+[CV] END max\_depth=21, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   2.5s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   0.9s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   1.0s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.4s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   1.0s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.4s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.4s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.5s
+[CV] END max\_depth=25, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.4s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   1.0s
+[CV] END max\_depth=21, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   2.4s
+[CV] END max\_depth=21, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   2.5s
+[CV] END max\_depth=None, max\_features=0.33, min\_samples\_leaf=1,
+min\_samples\_split=5; total time=   1.0s
+[CV] END max\_depth=21, max\_features=0.8325, min\_samples\_leaf=2,
+min\_samples\_split=2; total time=   2.4s
+[CV] END max\_depth=21, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=17, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.2s
+[CV] END max\_depth=17, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.2s
+[CV] END max\_depth=21, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=21, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=21, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.3s
+[CV] END max\_depth=21, max\_features=0.4975, min\_samples\_leaf=1,
+min\_samples\_split=10; total time=   1.4s
+[CV] END max\_depth=17, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.1s
+[CV] END max\_depth=17, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.1s
+[CV] END max\_depth=17, max\_features=0.4975, min\_samples\_leaf=2,
+min\_samples\_split=10; total time=   1.1s
+[CV] END max\_depth=13, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.9s
+[CV] END max\_depth=13, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.9s
+[CV] END max\_depth=13, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.8s
+[CV] END max\_depth=13, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.7s
+[CV] END max\_depth=13, max\_features=0.4975, min\_samples\_leaf=4,
+min\_samples\_split=2; total time=   0.7s
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{hparam\PYZus{}data\PYZus{}pca} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{hparam\PYZus{}cv\PYZus{}pca}\PY{o}{.}\PY{n}{cv\PYZus{}results\PYZus{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{hparam\PYZus{}data\PYZus{}pca}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}fit\PYZus{}time}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{round}\PY{p}{(}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+\PY{n}{hparam\PYZus{}data\PYZus{}pca}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{hist}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean test scores}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{hparam\PYZus{}data\PYZus{}pca}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{param\PYZus{}max\PYZus{}depth}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}test\PYZus{}score}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{estimator}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+       mean\_test\_score  mean\_fit\_time
+count           20.000         20.000
+mean             0.829          1.554
+std              0.014          0.722
+min              0.786          0.624
+25\%              0.823          0.951
+50\%              0.832          1.361
+75\%              0.838          2.080
+max              0.845          3.304
+    \end{Verbatim}
+
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: xlabel='param\_max\_depth', ylabel='mean\_test\_score'>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_37_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_37_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{decision-tree-full-training-set-test}{%
+\subsubsection{Decision Tree Full Training Set
+test}\label{decision-tree-full-training-set-test}}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{model\PYZus{}dt} \PY{o}{=} \PY{n}{Pipeline}\PY{p}{(}
+    \PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pca}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{clf}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{DecisionTreeClassifier}\PY{p}{(}\PY{o}{*}\PY{o}{*}\PY{n}{hparam\PYZus{}cv}\PY{o}{.}\PY{n}{best\PYZus{}params\PYZus{}}\PY{p}{)}\PY{p}{)}
+    \PY{p}{]}
+\PY{p}{)}
+\PY{n}{model\PYZus{}dt}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}train} \PY{o}{=} \PY{n}{model\PYZus{}dt}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\PY{n}{y\PYZus{}pred\PYZus{}test} \PY{o}{=} \PY{n}{model\PYZus{}dt}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Additional}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Train accuracy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Test accuracy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{fig}\PY{p}{,} \PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{sharex}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{sharey}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}train}\PY{p}{)}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred\PYZus{}test}\PY{p}{)}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Train accuracy 0.9629333333333333
+Test accuracy 0.8412
+    \end{Verbatim}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<AxesSubplot: >
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_39_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \hypertarget{kmeans}{%
+\subsection{KMeans}\label{kmeans}}
+
+Let us see if the classes are separable in the latent space
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{cluster} \PY{k+kn}{import} \PY{n}{KMeans}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k+kn}{import} \PY{n}{PCA}
+
+\PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{)}
+\PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{l+m+mi}{10}\PY{p}{)} \PY{c+c1}{\PYZsh{} 1 for each label}
+
+\PY{n}{pipeline} \PY{o}{=} \PY{n}{Pipeline}\PY{p}{(}
+    \PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pca}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{pca}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{kmeans}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{kmeans}\PY{p}{)}
+    \PY{p}{]}
+    \PY{p}{)}
+
+\PY{n}{cluster\PYZus{}labels} \PY{o}{=} \PY{n}{pipeline}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+
+\PY{n}{pca\PYZus{}X} \PY{o}{=} \PY{n}{pca}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axs} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+    \PY{n}{mask} \PY{o}{=} \PY{n}{y\PYZus{}train} \PY{o}{==} \PY{n}{i}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{pca\PYZus{}X}\PY{p}{[}\PY{n}{mask}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{pca\PYZus{}X}\PY{p}{[}\PY{n}{mask}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{n}{i}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{.2}\PY{p}{)}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+\PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{:}
+    \PY{n}{mask} \PY{o}{=} \PY{n}{cluster\PYZus{}labels} \PY{o}{==} \PY{n}{i}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{pca\PYZus{}X}\PY{p}{[}\PY{n}{mask}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{pca\PYZus{}X}\PY{p}{[}\PY{n}{mask}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{n}{i}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{.2}\PY{p}{)}
+    \PY{n}{axs}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{for} \PY{n}{ax} \PY{o+ow}{in} \PY{n}{axs}\PY{p}{:}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{PCA0}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{PCA1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_42_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{cluster\PYZus{}labels}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+<matplotlib.collections.PathCollection at 0x7f7bf8dab880>
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{notebook_files/notebook_43_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \ldots while similar clusters can be seen, no inference can be made
+directly on the cluster assignment
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
